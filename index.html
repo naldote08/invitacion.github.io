@@ -2127,11 +2127,11 @@ body {
           <section class="paper-content countdown-page" data-page="1">
             <div class="curl-sheen"></div>
             <span class="eyebrow">✦ Defensa privada ✦</span>
-            <h2>Defensa Privada</h2>
+            <h2>Defensa Publica</h2>
             <p class="event-date">Viernes, 30 de octubre de 2026</p>
             <p class="event-venue">Auditorio de Automotriz</p>
             <p class="event-phrase">Acompáñame a compartir el trabajo y la dedicación que me trajeron hasta aquí.</p>
-            <div class="event-countdown" data-event="2026-10-30T00:00:00-05:00" aria-label="Tiempo restante para el día de la defensa privada">
+            <div class="event-countdown" data-event="2026-10-30T00:00:00-05:00" aria-label="Tiempo restante para el día de la defensa publica">
               <span class="countdown-label">Falta para el día del evento</span>
               <div class="countdown-values">
                 <div class="countdown-unit"><strong data-unit="days">--</strong><span>Días</span></div>
@@ -2958,10 +2958,10 @@ function openRsvp(eventType, event) {
   event.stopPropagation();
   activeRsvpEvent = eventType;
   rsvpTitle.textContent = eventType === 'defensa-privada'
-    ? 'Confirma tu asistencia a la Defensa Privada'
+    ? 'Confirma tu asistencia a la Defensa Publica'
     : 'Confirma tu asistencia';
   rsvpDescription.textContent = eventType === 'defensa-privada'
-    ? 'Escribe tu nombre y apellido para la Defensa Privada.'
+    ? 'Escribe tu nombre y apellido para la Defensa Publica.'
     : 'Escribe tu nombre y apellido para la incorporación.';
   rsvpStatus.textContent = '';
   rsvpStatus.className = 'rsvp-status';
@@ -3022,9 +3022,9 @@ function openGuestList(eventType, event) {
   event.stopPropagation();
   activeGuestEvent = eventType;
   const isPrivate = eventType === 'defensa-privada';
-  guestEvent.textContent = isPrivate ? '✦ Defensa Privada ✦' : '✦ Incorporación ✦';
+  guestEvent.textContent = isPrivate ? '✦ Defensa Publica ✦' : '✦ Incorporación ✦';
   guestIntro.textContent = isPrivate
-    ? 'Personas que confirmaron su asistencia a la Defensa Privada.'
+    ? 'Personas que confirmaron su asistencia a la Defensa Publica.'
     : 'Personas que confirmaron su asistencia a la Incorporación.';
   guestDialog.showModal();
   loadGuestList();
@@ -3063,7 +3063,7 @@ rsvpForm.addEventListener('submit', async (event) => {
     const result = await window.rsvpData.saveGuest(firstName, lastName, eventType);
     rsvpStatus.textContent = result.already
       ? `${firstName}, ya confirmaste tu asistencia a este evento.`
-      : `¡Gracias, ${firstName}! Tu asistencia a ${eventType === 'defensa-privada' ? 'la Defensa Privada' : 'la Incorporación'} quedó confirmada.`;
+      : `¡Gracias, ${firstName}! Tu asistencia a ${eventType === 'defensa-privada' ? 'la Defensa Publica' : 'la Incorporación'} quedó confirmada.`;
     rsvpStatus.classList.add('success');
     rsvpForm.reset();
     await new Promise(resolve => setTimeout(resolve, 850));
