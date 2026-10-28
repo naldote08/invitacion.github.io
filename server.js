@@ -4,6 +4,7 @@ const path = require('node:path');
 
 const root = __dirname;
 const guestFile = process.env.GUEST_FILE || path.join(root, 'invitados.txt');
+const privateGuestFile = process.env.PRIVATE_GUEST_FILE || path.join(root, 'defensa-privada.txt');
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || '0.0.0.0';
 const publicFiles = new Map([
@@ -47,8 +48,8 @@ function normalizeName(value) {
   return name;
 }
 
-async function readGuests() {
-  const text = await fs.readFile(guestFile, 'utf8');
+async function readGuests(file = guestFile) {
+  const text = await fs.readFile(file, 'utf8');
   return text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
 }
 
@@ -76,7 +77,12 @@ const server = http.createServer(async (request, response) => {
       return;
     }
     if (url.pathname === '/api/guests' && request.method === 'GET') {
-      const guests = await readGuests();
+      const eventType = url.searchParams.get('eventType') || 'incorporacion';
+      if (eventType !== 'incorporacion' && eventType !== 'defensa-privada') {
+        sendJson(response, 400, { error: 'Evento inválido.' });
+        return;
+      }
+      const guests = await readGuests(eventType === 'defensa-privada' ? privateGuestFile : guestFile);
       sendJson(response, 200, { guests });
       return;
     }
@@ -99,6 +105,12 @@ const server = http.createServer(async (request, response) => {
         return;
       }
       const data = await readJson(request);
+      const eventType = data?.eventType || 'incorporacion';
+      if (eventType !== 'incorporacion' && eventType !== 'defensa-privada') {
+        sendJson(response, 400, { error: 'Evento inválido.' });
+        return;
+      }
+      const targetFile = eventType === 'defensa-privada' ? privateGuestFile : guestFile;
       const firstName = normalizeName(data?.firstName);
       const lastName = normalizeName(data?.lastName);
       if (!firstName || !lastName) {
@@ -107,17 +119,17 @@ const server = http.createServer(async (request, response) => {
       }
       const fullName = `${firstName} ${lastName}`;
       const save = saveQueue.then(async () => {
-        const guests = await readGuests();
+        const guests = await readGuests(targetFile);
         if (guests.some(guest => guest.toLocaleLowerCase('es') === fullName.toLocaleLowerCase('es'))) {
           return false;
         }
-        await fs.appendFile(guestFile, `${fullName}\n`, 'utf8');
+        await fs.appendFile(targetFile, `${fullName}\n`, 'utf8');
         return true;
       });
       saveQueue = save.catch(() => {});
       const created = await save;
       if (!created) {
-        sendJson(response, 409, { error: 'Este nombre ya está en la lista de invitados.' });
+        sendJson(response, 200, { ok: true, already: true });
         return;
       }
       sendJson(response, 201, { ok: true, guest: fullName });
@@ -147,15 +159,18 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-fs.mkdir(path.dirname(guestFile), { recursive: true })
-  .then(() => fs.open(guestFile, 'a'))
-  .then(file => file.close())
+Promise.all([guestFile, privateGuestFile].map(async filePath => {
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  const file = await fs.open(filePath, 'a');
+  await file.close();
+}))
   .then(() => {
   server.listen(port, host, () => {
     console.log(`Invitación disponible en http://localhost:${server.address().port}`);
-    console.log(`Lista guardada en ${guestFile}`);
+    console.log(`Lista de incorporación guardada en ${guestFile}`);
+    console.log(`Lista de defensa privada guardada en ${privateGuestFile}`);
   });
 }).catch(error => {
-  console.error('No se pudo abrir invitados.txt:', error);
+  console.error('No se pudieron abrir los archivos de invitados:', error);
   process.exitCode = 1;
 });
