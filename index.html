@@ -100,6 +100,7 @@ body {
 
 /* Envelope Container */
 .envelope-wrap {
+  position: relative;
   height: 360px;
   display: grid;
   place-items: center;
@@ -1141,9 +1142,14 @@ body {
 }
 
 .guest-list-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 11px;
   color: var(--navy);
+  cursor: pointer;
+  text-decoration: underline;
   text-underline-offset: 3px;
 }
 
@@ -1166,7 +1172,122 @@ body {
 
 .rsvp-dialog h2 {
   margin: 0 0 8px;
+  padding-right: 32px;
   font: 600 27px 'Cinzel', Georgia, serif;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #d9c9aa;
+  border-radius: 50%;
+  background: #fffaf0;
+  color: var(--navy);
+  font: 24px/1 Arial, sans-serif;
+  cursor: pointer;
+}
+
+.dialog-close:hover,
+.dialog-close:focus-visible {
+  background: var(--navy);
+  color: #fff4d4;
+}
+
+.guest-dialog {
+  width: min(520px, calc(100vw - 32px));
+  padding: 30px;
+}
+
+.guest-dialog .eyebrow {
+  margin-bottom: 8px;
+  color: #9e7a3e;
+}
+
+.guest-dialog h2 {
+  font-size: clamp(23px, 5vw, 31px);
+}
+
+.guest-dialog .guest-intro {
+  margin-bottom: 20px;
+  color: #506275;
+}
+
+.guest-dialog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #d9c9aa;
+}
+
+.guest-count {
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guest-refresh {
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--navy);
+  color: #fff4d4;
+  font: 600 11px 'Montserrat', Arial, sans-serif;
+  cursor: pointer;
+}
+
+.guest-refresh:hover,
+.guest-refresh:focus-visible {
+  background: #1c4667;
+}
+
+.guest-refresh:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.guest-status {
+  margin: 14px 0 0 !important;
+  min-height: 18px;
+  font-size: 12px !important;
+  color: #506275;
+}
+
+.guest-status.error { color: #a82424; }
+
+.guest-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(42svh, 320px);
+  overflow-y: auto;
+  margin: 14px 0 0;
+  padding: 0 2px 2px 32px;
+  color: #a27c43;
+}
+
+.guest-list li {
+  padding: 11px 14px;
+  border: 1px solid #e5d8bd;
+  border-radius: 9px;
+  background: #fffaf2;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.guest-empty {
+  margin: 18px 0 0 !important;
+  padding: 20px;
+  border: 1px dashed #d9c9aa;
+  border-radius: 10px;
+  text-align: center;
+  color: #6c7480;
 }
 
 .rsvp-dialog p {
@@ -1609,31 +1730,50 @@ body {
 }
 
 .hint {
-  font-family: 'Montserrat', Arial, sans-serif;
-  font-size: 11px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: #dfc89d;
-  margin-top: 14px;
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: min(300px, 78vw);
+  height: auto;
+  transform: translateX(-50%);
+  z-index: 12;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  fill: #fff0bd;
+  stroke: #10293e;
+  stroke-width: 3px;
+  paint-order: stroke fill;
   transition: opacity .4s ease, transform .4s ease;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  pointer-events: auto;
+  overflow: visible;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .8));
 }
 
-.hint .hint-icon {
-  display: inline-block;
-  color: var(--gold);
-  animation: pulseGold 2s infinite ease-in-out;
+.hint text {
+  animation: hintGlow 2.6s ease-in-out infinite;
 }
 
-@keyframes pulseGold {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 6px #ffd978); }
+.hint:focus {
+  outline: none;
+}
+
+.hint:focus-visible {
+  outline: 2px solid #ffd978;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+@keyframes hintGlow {
+  0%, 100% { opacity: .8; filter: drop-shadow(0 0 2px rgba(255, 217, 120, .5)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(255, 226, 150, .95)); }
 }
 
 .footer {
+  position: relative;
+  top: -14px;
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 10px;
   letter-spacing: .22em;
@@ -1650,7 +1790,7 @@ body {
   transform: translateX(-50%);
   z-index: 60;
   color: #c9b895;
-  font: 500 10px 'Montserrat', Arial, sans-serif;
+  font: 500 13px 'Montserrat', Arial, sans-serif;
   letter-spacing: .08em;
   white-space: nowrap;
 }
@@ -1676,6 +1816,18 @@ body {
   max-height: 0;
   margin: 0;
   overflow: hidden;
+}
+
+.scene.is-opening .hint {
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: .12s;
+}
+
+.open .hint,
+.scene.is-opening .hint text,
+.open .hint text {
+  animation: none;
 }
 
 /* Navigational controls (pegados al lado de la carta) */
@@ -1905,7 +2057,7 @@ body {
             </div>
             <div class="rsvp-actions">
               <button class="rsvp-open" id="rsvpBtn" type="button">Confirmar asistencia</button>
-              <a class="guest-list-link" href="invitados.html" target="_blank" rel="noopener">Ver invitados</a>
+              <button class="guest-list-link" id="guestListBtn" type="button">Ver invitados</button>
             </div>
           </section>
 
@@ -2060,13 +2212,17 @@ body {
         </div>
       </div>
 
+      <svg class="hint" id="ribbonHint" viewBox="0 0 280 110" role="button" tabindex="0" aria-label="Da click en el lazo">
+        <defs><path id="ribbonHintCurve" d="M 16 92 Q 140 -18 264 92" /></defs>
+        <text><textPath href="#ribbonHintCurve" startOffset="50%" text-anchor="middle">DA CLICK EN EL LAZO</textPath></text>
+      </svg>
+
       <!-- Next Button (pegado al lado derecho de la carta) -->
       <button class="nav-btn next" id="next" aria-label="Siguiente página" title="Siguiente página">
         <span class="nav-arrow">›</span>
       </button>
     </div>
 
-    <div class="hint" id="ribbonHint"><span class="hint-icon">✦</span> &nbsp; Toca el lazo para desatar la invitación</div>
     <div class="footer">Una celebración para recordar</div>
   </div>
 </main>
@@ -2074,6 +2230,7 @@ body {
 
 <dialog class="rsvp-dialog" id="rsvpDialog" aria-labelledby="rsvpTitle">
   <form id="rsvpForm">
+    <button class="dialog-close" id="rsvpClose" type="button" aria-label="Cerrar confirmación">&times;</button>
     <h2 id="rsvpTitle">Confirma tu asistencia</h2>
     <p>Escribe tu nombre y apellido para la incorporación.</p>
     <div class="rsvp-fields">
@@ -2086,6 +2243,20 @@ body {
       <button class="rsvp-submit" type="submit">Confirmar</button>
     </div>
   </form>
+</dialog>
+
+<dialog class="rsvp-dialog guest-dialog" id="guestDialog" aria-labelledby="guestTitle">
+  <button class="dialog-close" id="guestClose" type="button" aria-label="Cerrar lista de invitados">&times;</button>
+  <p class="eyebrow">✦ Incorporación ✦</p>
+  <h2 id="guestTitle">Lista de invitados</h2>
+  <p class="guest-intro">Personas que confirmaron su asistencia.</p>
+  <div class="guest-dialog-toolbar">
+    <span class="guest-count" id="guestCount">Cargando lista…</span>
+    <button class="guest-refresh" id="guestRefresh" type="button">Actualizar</button>
+  </div>
+  <p class="guest-status" id="guestStatus" role="status" aria-live="polite"></p>
+  <ol class="guest-list" id="guestList"></ol>
+  <p class="guest-empty" id="guestEmpty" hidden>Aún no hay confirmaciones. ¡Sé la primera persona en la lista!</p>
 </dialog>
 
 <script src="config.js"></script>
@@ -2102,6 +2273,12 @@ const rsvpBtn = document.getElementById('rsvpBtn');
 const rsvpDialog = document.getElementById('rsvpDialog');
 const rsvpForm = document.getElementById('rsvpForm');
 const rsvpStatus = document.getElementById('rsvpStatus');
+const guestDialog = document.getElementById('guestDialog');
+const guestList = document.getElementById('guestList');
+const guestStatus = document.getElementById('guestStatus');
+const guestCount = document.getElementById('guestCount');
+const guestEmpty = document.getElementById('guestEmpty');
+const guestRefresh = document.getElementById('guestRefresh');
 
 // Reveal elements
 const revealInner = document.getElementById('revealInner');
@@ -2399,6 +2576,7 @@ function triggerSparkles() {
 function openLetter() {
   if (isOpen || isOpening) return;
   isOpening = true;
+  scene.classList.add('is-opening');
 
   playUntieSound();
   triggerSparkles();
@@ -2416,6 +2594,7 @@ function openLetter() {
     isOpening = false;
     isOpen = true;
     scene.classList.add('open');
+    scene.classList.remove('is-opening');
     prevBtn.style.visibility = 'hidden';
     prevBtn.style.pointerEvents = 'none';
     nextBtn.style.visibility = 'visible';
@@ -2530,6 +2709,12 @@ if (ribbonHint) {
   ribbonHint.addEventListener('click', (e) => {
     if (!isOpen) openLetter();
   });
+  ribbonHint.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !isOpen) {
+      e.preventDefault();
+      openLetter();
+    }
+  });
 }
 
 envelope.addEventListener('keydown', (e) => {
@@ -2580,7 +2765,7 @@ prevBtn.addEventListener('click', (e) => {
 
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
-  if (rsvpDialog.open) return;
+  if (rsvpDialog.open || guestDialog.open) return;
   if (!isOpen) return;
   if (e.key === 'ArrowRight' || e.key === 'PageDown') {
     if (index < pages.length - 1) showPage(index + 1);
@@ -2656,6 +2841,40 @@ rsvpBtn.addEventListener('click', (event) => {
 });
 
 document.getElementById('rsvpCancel').addEventListener('click', () => rsvpDialog.close());
+document.getElementById('rsvpClose').addEventListener('click', () => rsvpDialog.close());
+
+async function loadGuestList() {
+  guestRefresh.disabled = true;
+  guestCount.textContent = 'Cargando lista…';
+  guestStatus.textContent = '';
+  guestStatus.className = 'guest-status';
+  guestEmpty.hidden = true;
+  guestList.replaceChildren();
+  try {
+    const guests = await window.rsvpData.listGuests();
+    for (const name of guests) {
+      const item = document.createElement('li');
+      item.textContent = name;
+      guestList.append(item);
+    }
+    guestCount.textContent = `${guests.length} ${guests.length === 1 ? 'persona confirmada' : 'personas confirmadas'}`;
+    guestEmpty.hidden = guests.length !== 0;
+  } catch (error) {
+    guestCount.textContent = 'Lista de invitados';
+    guestStatus.textContent = error.message || 'No se pudo cargar la lista. Inténtalo de nuevo.';
+    guestStatus.classList.add('error');
+  } finally {
+    guestRefresh.disabled = false;
+  }
+}
+
+document.getElementById('guestListBtn').addEventListener('click', (event) => {
+  event.stopPropagation();
+  guestDialog.showModal();
+  loadGuestList();
+});
+document.getElementById('guestClose').addEventListener('click', () => guestDialog.close());
+guestRefresh.addEventListener('click', loadGuestList);
 
 rsvpForm.addEventListener('submit', async (event) => {
   event.preventDefault();
