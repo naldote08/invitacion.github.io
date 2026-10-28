@@ -54,7 +54,7 @@ body {
   height: 100svh;
   display: grid;
   place-items: center;
-  padding: 30px 20px 84px;
+  padding: max(30px, env(safe-area-inset-top)) 20px max(84px, calc(env(safe-area-inset-bottom) + 64px));
   position: relative;
   overflow: hidden;
 }
@@ -1141,6 +1141,17 @@ body {
   box-shadow: 0 7px 18px rgba(16, 42, 66, .25);
 }
 
+.rsvp-open:disabled,
+.rsvp-submit:disabled,
+.rsvp-cancel:disabled,
+.dialog-close:disabled {
+  opacity: .58;
+  cursor: wait;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
 .guest-list-link {
   border: 0;
   padding: 0;
@@ -1786,7 +1797,7 @@ body {
 .site-credit {
   position: fixed;
   left: 50%;
-  bottom: 6px;
+  bottom: max(6px, env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: 60;
   color: #c9b895;
@@ -1908,7 +1919,7 @@ body {
 
 @media (max-width: 540px) {
   .scene {
-    padding: 20px 14px 30px;
+    padding: max(20px, env(safe-area-inset-top)) 14px max(30px, calc(env(safe-area-inset-bottom) + 20px));
   }
   .subtitle {
     font-size: clamp(20px, 5vw, 25px);
@@ -1920,13 +1931,17 @@ body {
   [data-page="2"].countdown-page { gap: 6px; }
   [data-page="2"] .event-phrase { line-height: 1.3; }
   .scene.open {
-    padding: 20px 14px;
+    padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
   }
   .envelope-wrap {
     height: 280px;
   }
   .envelope {
     height: 220px;
+  }
+  .paper {
+    bottom: 10px;
+    height: calc(100% - 20px);
   }
   .open .envelope-wrap {
     height: min(84svh, 720px);
@@ -1961,6 +1976,96 @@ body {
   .meme-interactive-card {
     max-width: min(100%, 34svh);
   }
+}
+
+/* Small phones: keep controls readable and the letter within the viewport. */
+@media (max-width: 420px) {
+  .scene { padding-right: 12px; padding-left: 12px; }
+  .eyebrow { font-size: 9px; letter-spacing: .24em; }
+  .title { font-size: clamp(27px, 8vw, 36px); }
+  .subtitle { margin-top: 12px; font-size: clamp(19px, 5.7vw, 23px); }
+  .envelope-wrap { height: 260px; margin-top: 12px; }
+  .envelope { width: min(390px, 88vw); height: min(220px, 61vw); }
+  .hint { width: min(280px, 82vw); }
+  .paper-content { padding-right: 16px; padding-left: 16px; }
+  .paper-content h2 { font-size: clamp(24px, 7.5vw, 32px); }
+  .event-countdown { padding: 12px 10px; }
+  .countdown-values { gap: 4px; }
+  .countdown-unit { padding: 8px 2px; }
+  .countdown-unit strong { font-size: clamp(19px, 6vw, 26px); }
+  .countdown-unit span { font-size: 7px; letter-spacing: .03em; }
+  .rsvp-actions { gap: 4px; }
+  .rsvp-open { min-height: 42px; padding: 9px 10px; font-size: 10px; letter-spacing: .04em; }
+  .guest-list-link { min-height: 42px; padding: 8px; font-size: 10px; }
+  .nav-btn { width: 40px; height: 40px; }
+  .site-credit { font-size: 11px; }
+}
+
+@media (max-width: 420px) {
+  .rsvp-dialog,
+  .guest-dialog { padding: 24px 18px; }
+  .rsvp-dialog h2 { font-size: 23px; }
+  .rsvp-fields { grid-template-columns: 1fr; gap: 10px; }
+  .rsvp-fields input { min-height: 44px; font-size: 16px; }
+  .rsvp-cancel,
+  .rsvp-submit { min-height: 44px; padding: 10px 16px; }
+  .dialog-close { width: 40px; height: 40px; }
+  .rsvp-dialog-actions { margin-top: 16px; }
+  .guest-dialog h2 { font-size: 24px; }
+  .guest-dialog-toolbar { align-items: flex-start; }
+  .guest-count { padding-top: 8px; }
+  .guest-refresh { min-height: 44px; }
+  .guest-list { max-height: 38svh; }
+}
+
+/* Compact landscape screens need a shorter envelope and tighter spacing. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .scene { padding: 8px 14px 26px; }
+  .header-group .eyebrow { margin-bottom: 5px; }
+  .header-group .title { font-size: clamp(23px, 5vw, 32px); }
+  .header-group .subtitle { margin-top: 7px; font-size: clamp(17px, 3vw, 22px); }
+  .envelope-wrap { height: 190px; margin-top: 6px; }
+  .envelope { width: min(370px, 72vw); height: min(160px, 41vw); }
+  .paper { bottom: 10px; height: calc(100% - 20px); }
+  .hint { top: 12%; }
+  .footer { margin-top: 8px; font-size: 9px; }
+  .scene.open { height: 100svh; padding: 8px 14px; }
+  .open .envelope-wrap { height: 92svh; }
+  .open .envelope { width: min(540px, 88vw, 70svh); height: 84svh; }
+  .open .paper-content { padding-top: 14px; padding-bottom: 28px; }
+  .open .nav-btn { width: 40px; height: 40px; }
+  .rsvp-dialog,
+  .guest-dialog { max-height: calc(100svh - 16px); overflow-y: auto; }
+}
+
+@media (max-width: 600px) and (max-height: 680px) {
+  html, body { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
+  body { min-height: 100svh; }
+  .scene {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    padding: max(16px, env(safe-area-inset-top)) 14px max(34px, calc(env(safe-area-inset-bottom) + 20px));
+  }
+  .scene.open {
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+    padding: max(12px, env(safe-area-inset-top)) 14px max(12px, env(safe-area-inset-bottom));
+  }
+  .envelope-wrap { height: min(280px, 48svh); }
+  .envelope { height: min(220px, 37svh); }
+}
+
+@media (hover: none) {
+  .envelope:hover .ribbon-bow-container { transform: translate(-50%, -50%); }
+  .envelope:hover .bow-loop-left,
+  .envelope:hover .bow-loop-right,
+  .envelope:hover .bow-tail-left,
+  .envelope:hover .bow-tail-right { transform: none; }
+  .nav-btn:hover { transform: translateY(-50%); }
+  .rsvp-open:hover,
+  .rsvp-submit:hover { transform: none; box-shadow: 0 4px 14px rgba(16, 42, 66, .25); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2281,7 +2386,11 @@ const rsvpForm = document.getElementById('rsvpForm');
 const rsvpStatus = document.getElementById('rsvpStatus');
 const rsvpTitle = document.getElementById('rsvpTitle');
 const rsvpDescription = document.getElementById('rsvpDescription');
+const rsvpSubmitBtn = rsvpForm.querySelector('[type="submit"]');
+const rsvpCancelBtn = document.getElementById('rsvpCancel');
+const rsvpCloseBtn = document.getElementById('rsvpClose');
 let activeRsvpEvent = 'incorporacion';
+let isSavingRsvp = false;
 const guestDialog = document.getElementById('guestDialog');
 const guestList = document.getElementById('guestList');
 const guestStatus = document.getElementById('guestStatus');
@@ -2863,8 +2972,22 @@ function openRsvp(eventType, event) {
 rsvpBtn.addEventListener('click', event => openRsvp('incorporacion', event));
 privateRsvpBtn.addEventListener('click', event => openRsvp('defensa-privada', event));
 
-document.getElementById('rsvpCancel').addEventListener('click', () => rsvpDialog.close());
-document.getElementById('rsvpClose').addEventListener('click', () => rsvpDialog.close());
+rsvpCancelBtn.addEventListener('click', () => rsvpDialog.close());
+rsvpCloseBtn.addEventListener('click', () => rsvpDialog.close());
+rsvpDialog.addEventListener('cancel', event => {
+  if (isSavingRsvp) event.preventDefault();
+});
+
+function setRsvpBusy(busy) {
+  isSavingRsvp = busy;
+  [rsvpBtn, privateRsvpBtn, rsvpSubmitBtn, rsvpCancelBtn, rsvpCloseBtn].forEach(button => {
+    button.disabled = busy;
+  });
+  rsvpForm.querySelectorAll('input').forEach(input => {
+    input.disabled = busy;
+  });
+  rsvpSubmitBtn.textContent = busy ? 'Guardando…' : 'Confirmar';
+}
 
 async function loadGuestList() {
   const loadId = ++guestLoadId;
@@ -2914,10 +3037,10 @@ guestRefresh.addEventListener('click', loadGuestList);
 
 rsvpForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  if (isSavingRsvp) return;
   const firstName = rsvpForm.elements.firstName.value.trim();
   const lastName = rsvpForm.elements.lastName.value.trim();
   const eventType = activeRsvpEvent;
-  const submitButton = rsvpForm.querySelector('[type="submit"]');
   rsvpStatus.className = 'rsvp-status';
   if (!firstName || !lastName) {
     rsvpStatus.textContent = 'Escribe tu nombre y apellido.';
@@ -2934,7 +3057,7 @@ rsvpForm.addEventListener('submit', async (event) => {
     rsvpStatus.classList.add('error');
     return;
   }
-  submitButton.disabled = true;
+  setRsvpBusy(true);
   rsvpStatus.textContent = 'Guardando confirmación…';
   try {
     const result = await window.rsvpData.saveGuest(firstName, lastName, eventType);
@@ -2943,11 +3066,13 @@ rsvpForm.addEventListener('submit', async (event) => {
       : `¡Gracias, ${firstName}! Tu asistencia a ${eventType === 'defensa-privada' ? 'la Defensa Privada' : 'la Incorporación'} quedó confirmada.`;
     rsvpStatus.classList.add('success');
     rsvpForm.reset();
+    await new Promise(resolve => setTimeout(resolve, 850));
+    rsvpDialog.close();
   } catch (error) {
     rsvpStatus.textContent = error.message || 'No se pudo guardar. Inténtalo de nuevo.';
     rsvpStatus.classList.add('error');
   } finally {
-    submitButton.disabled = false;
+    setRsvpBusy(false);
   }
 });
 </script>
